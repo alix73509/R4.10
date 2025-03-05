@@ -1,12 +1,24 @@
-
 <script setup>
-import { ref } from 'vue';
-
-const text = ref("lakaka");
+import postCard from "@/components/postCard.vue";
+import { computed, ref } from "vue";
 const posts = ref([]);
+const sortedPosts = computed(() => posts.value.toSorted((a, b) => b.computed));
 
-function addPost(){
-  posts.value.push(text.value);
+const text = ref("");
+const trimmedText = computed(() => text.value.trim());
+
+function addPost() {
+  const newPost = {
+    id: Math.random().toString(36).substring(2),
+    content: text.value.trim(),
+    createdAt: new Date(),
+    author: {
+      username: "Camou",
+      avatarUrl: "https://media1.tenor.com/m/a5RGfluwSOgAAAAd/sylvian-delhoumi.gif",
+    },
+  };
+  posts.value.push(newPost);
+
   text.value = "";
 }
 </script>
@@ -15,54 +27,34 @@ function addPost(){
   <main>
     <div class="container">
       <form class="card" @submit.prevent="addPost">
-        <textarea name="post" id="post" placeholder="Wsh ma couille" v-model="text" ></textarea>
-        <button type="submit">Publier</button>
+        <textarea name="post" id="post" placeholder="saissiez" v-model="text"></textarea>
+        <button type="submit" :disabled="!text.trim()">Publier</button>
       </form>
-      <p v-for="(post, index) in posts" :key="index">{{ post }}</p>
+      <h2 v-if="!posts.length">Aucun posts</h2>
+
+      <postCard v-for="(post, index) in sortedPosts" :key="index" :post="post" />
+      <!--
+      <article class="card" v-for="(post, index) in sortedPosts" :key="index">
+        <header>
+          <img :src="post.author.avatarUrl" alt="avatar" width="36" height="36" />
+          <a>{{ post.author.username }}</a>
+          <b>
+            {{
+              post.createdAt.toLocaleString("fr-FR", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })
+            }}
+          </b>
+        </header>
+        <p>{{ post.content }}</p>
+      </article>
+      -->
     </div>
   </main>
 </template>
-
-<style scoped>
-.container {
-  height: 100vh;
-  margin: 0 auto;
-  max-width: 640px;
-}
-.card {
-  background-color: var(--color-bg-secondary);
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
-  margin-bottom: 1rem;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-  padding: 1rem 1.5rem;
-  width: 100%;
-}
-textarea {
-  background: none;
-  border: none;
-  color: var(--color-text-primary);
-  flex: 1;
-  margin-bottom: 1rem;
-  outline: none;
-  padding: 0.5rem 0;
-  resize: none;
-  field-sizing: content;
-}
-button {
-  align-self: flex-end;
-  background: none;
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  font-size: 1rem;
-  height: 40px;
-  padding: 0 1rem;
-}
-</style>
