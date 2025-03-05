@@ -1,10 +1,21 @@
 <script setup>
-defineProps({
+import { TrashIcon } from "@heroicons/vue/24/outline";
+import { HeartIcon } from "@heroicons/vue/24/outline";
+const props = defineProps({
   post: {
     type: Object,
     required: true,
   },
 });
+const emit = defineEmits(["delete", "like"]);
+function deletePost() {
+  emit("delete", props.post.id);
+}
+
+function likePost() {
+  emit("like", props.post.id);
+}
+
 const sortedPosts = [];
 </script>
 
@@ -28,8 +39,16 @@ const sortedPosts = [];
       </b>
     </header>
     <p>{{ post.content }}</p>
+
     <footer>
-        <button>Supprimer</button>
+      <button @click="deletePost" class="btn-icon">
+        <TrashIcon />
+      </button>
+
+      <button @click="likePost" class="btn-icon">
+        <HeartIcon />
+      </button>
+      <p>{{ post.like }}</p>
     </footer>
   </article>
 </template>
