@@ -1,6 +1,11 @@
 <script setup>
 import { TrashIcon } from "@heroicons/vue/24/outline";
 import { HeartIcon } from "@heroicons/vue/24/outline";
+import { HeartIcon as SolidHeartIcon } from "@heroicons/vue/24/solid";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
 const props = defineProps({
   post: {
     type: Object,
@@ -8,12 +13,17 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["delete", "like"]);
+
 function deletePost() {
   emit("delete", props.post.id);
 }
 
 function likePost() {
   emit("like", props.post.id);
+}
+
+function goToUserProfile() {
+  router.push({ name: "user", params: {username: props.post.author.username} });
 }
 
 const sortedPosts = [];
@@ -23,7 +33,7 @@ const sortedPosts = [];
   <article class="card">
     <header>
       <img :src="post.author.avatarUrl" alt="avatar" width="36" height="36" class="avatar" />
-      <a>{{ post.author.username }}</a>
+      <a @click="goToUserProfile">{{ post.author.username }}</a>
       <b>
         {{
           post.createdAt.toLocaleString("fr-FR", {
@@ -46,9 +56,9 @@ const sortedPosts = [];
       </button>
 
       <button @click="likePost" class="btn-icon">
-        <HeartIcon />
+        <HeartIcon v-if="!post.like" />
+        <SolidHeartIcon v-else class="active" />
       </button>
-      <p>{{ post.like }}</p>
     </footer>
   </article>
 </template>

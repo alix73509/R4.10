@@ -12,7 +12,9 @@ function deletePost(id) {
 }
 
 function likePost(id) {
-  posts.find((post) => post.id == id).like++;
+  const postUpdate = posts.value.find((post) => post.id == id);
+  postUpdate.like = !postUpdate.like;
+  //posts.find((post) => post.id == id).like++;
 }
 
 function addPost() {
@@ -24,7 +26,7 @@ function addPost() {
       username: "Camou",
       avatarUrl: "https://media1.tenor.com/m/a5RGfluwSOgAAAAd/sylvian-delhoumi.gif",
     },
-    like: 0,
+    like: false,
   };
   posts.value.push(newPost);
 
@@ -33,43 +35,5 @@ function addPost() {
 </script>
 
 <template>
-  <main>
-    <div class="container">
-      <form class="card" @submit.prevent="addPost">
-        <textarea name="post" id="post" placeholder="saissiez" v-model="text"></textarea>
-        <button type="submit" :disabled="!text.trim()">Publier</button>
-      </form>
-      <h2 v-if="!posts.length">Aucun posts</h2>
-
-      <postCard
-        v-for="(post, index) in sortedPosts"
-        :key="index"
-        :post="post"
-        @delete="deletePost"
-        @like="likePost"
-      />
-      <!--
-      <article class="card" v-for="(post, index) in sortedPosts" :key="index">
-        <header>
-          <img :src="post.author.avatarUrl" alt="avatar" width="36" height="36" />
-          <a>{{ post.author.username }}</a>
-          <b>
-            {{
-              post.createdAt.toLocaleString("fr-FR", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              })
-            }}
-          </b>
-        </header>
-        <p>{{ post.content }}</p>
-      </article>
-      -->
-    </div>
-  </main>
+  <RouterView />
 </template>
